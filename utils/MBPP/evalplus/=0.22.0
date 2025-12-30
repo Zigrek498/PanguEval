@@ -1,0 +1,2 @@
+Looking in indexes: https://mirrors.huaweicloud.com/repository/pypi/simple
+Requirement already satisfied: tree_sitter in /usr/local/python3.10.17/lib/python3.10/site-packages (0.21.3)
