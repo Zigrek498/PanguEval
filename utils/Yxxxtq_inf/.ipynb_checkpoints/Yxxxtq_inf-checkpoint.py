@@ -9,12 +9,11 @@ from datasets import load_dataset,load_from_disk
 from collections import defaultdict
 from tqdm import tqdm
 
-from ..utils import save_json,extract,judge_close_end_vqa
+from ..utils import cal_acc
 from ..base_dataset import BaseDataset
 
-from ..question_formats import get_math_prompt
 
-class AIME24(BaseDataset):
+class Yxxxtq_inf(BaseDataset):
     def __init__(self,model,dataset_path,output_path):
         self.model = model
         self.output_path = output_path
@@ -25,46 +24,49 @@ class AIME24(BaseDataset):
     
     def load_data(self):
         dataset = load_dataset(
-            "parquet",
-            data_files=f"{self.dataset_path}/*.parquet"
+            "json",
+            data_files=f"{self.dataset_path}/*.json"
         )["train"]
         
         dataset = dataset.shuffle(seed=42)
         
         for idx,sample in tqdm(enumerate(dataset)):
             if idx % self.num_chunks == self.chunk_idx:
-                # if sample["task"] in medical_subject:
                 sample = self.construct_messages(sample)
                 self.samples.append(sample)
         print(len(self.samples))
         return self.samples
 
     def construct_messages(self,sample):
-        answer = sample["Answer"]
-        question = sample["Problem"]
-        is_reasoning = True if os.environ.get("REASONING","False") == "True" else False
-        prompt = get_math_prompt(question, lang="en")
-
-        messages = {"prompt":prompt}
-        sample["prompt"] = prompt
+        answer = sample["answer"]
+        prompt = "Answer the question based on the text. Output only the option letter and nothing else."
+        user_content = (
+            f"Text:\n{sample['text']}\n\n"
+            f"Question:\n{sample['question']}\n\n"
+            f"{prompt}"
+        )
+        messages = {"prompt":user_content}
+        sample["prompt"] = user_content
         sample["messages"] = messages
         sample["answer"] = answer
         return sample
 
 
-    def cal_metrics(self,out_samples):
-        total = 0
-        right = 0
-        for i,sample in enumerate(out_samples):
-            response = sample["response"]
-            response = extract(response,"answer")
+
+    def cal_metrics(self, out_samples):
+        metrics = {}
+        metrics['total'] = 0
+        metrics['correct'] = 0
+    
+        for i, sample in enumerate(out_samples):
+            metrics['total'] += 1
+            resp = sample["response"].strip()
             answer = sample["answer"]
+    
+            if answer.lower() == resp.split('\n')[-1].lower():
+                metrics['correct'] += 1
+        metrics = cal_acc(metrics)
+    
+        return metrics, out_samples
 
-            correct = judge_close_end_vqa(answer,response)
-            out_samples[i]["correct"] = correct
-            if correct:
-                right += 1
-            total += 1
 
-        metrics = {"total metrics":{"total":total,"right":right,"acc":right/total}}
-        return metrics,out_samples

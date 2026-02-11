@@ -18,19 +18,18 @@ class AIME24(BaseDataset):
     def __init__(self,model,dataset_path,output_path):
         self.model = model
         self.output_path = output_path
-        self.dataset_path = dataset_path if dataset_path else "ceval/ceval-exam"
+        self.dataset_path = dataset_path
         self.samples = []
         self.chunk_idx = int(os.environ.get("chunk_idx",0))
         self.num_chunks = int(os.environ.get("num_chunks",1))
     
     def load_data(self):
-        # dataset = load_dataset(self.dataset_path)["train"]
         dataset = load_dataset(
             "parquet",
             data_files=f"{self.dataset_path}/*.parquet"
         )["train"]
         
-        dataset = dataset.shuffle(seed=42).select(range(10))
+        dataset = dataset.shuffle(seed=42)
         
         for idx,sample in tqdm(enumerate(dataset)):
             if idx % self.num_chunks == self.chunk_idx:
@@ -50,7 +49,6 @@ class AIME24(BaseDataset):
         sample["prompt"] = prompt
         sample["messages"] = messages
         sample["answer"] = answer
-        # import pdb;pdb.set_trace()
         return sample
 
 

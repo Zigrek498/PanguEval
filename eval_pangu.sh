@@ -6,13 +6,14 @@
 # read -p "请选择要评测的数据集 (逗号分隔，如 AIME24,AIME25): " EVAL_DATASETS
 
 # 基本设置
-ASCEND_RT_VISIBLE_DEVICES="5"
+ASCEND_RT_VISIBLE_DEVICES="0"
 PORT=1041
 MODEL_NAME="openPangu_1b"
 MODEL_PATH="/opt/pangu/openPangu-Embedded-1B-V1.1"
 THINKING_MODE="no_think"
 # THINKING_MODE="auto_think"
-EVAL_DATASETS="CMMLU,MMLU_Pro,CEval,GPQA_Diamond,AIME24,AIME25,LiveCodeBench,MBPP"
+# EVAL_DATASETS="CMMLU,MMLU_Pro,CEval,GPQA_Diamond,AIME24,AIME25,LiveCodeBench,MBPP"
+EVAL_DATASETS="CSarcasm,Wbdmt,Dwsxjy,Wbsxcq,Yxxxtq_inf"
 
 # 区分标准/非标准数据集
 EXTRA_DATASETS="LiveCodeBench,MBPP"

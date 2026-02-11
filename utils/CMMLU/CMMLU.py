@@ -29,8 +29,7 @@ class CMMLU(BaseDataset):
             data_files=f"{self.dataset_path}/*.csv"
         )["train"]
 
-        # 抽取10条进行测试
-        dataset = dataset.shuffle(seed=42).select(range(10))
+        dataset = dataset.shuffle(seed=42)
         
         for idx,sample in tqdm(enumerate(dataset)):
             if idx % self.num_chunks == self.chunk_idx:

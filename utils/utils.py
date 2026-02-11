@@ -25,6 +25,31 @@ from tenacity import (
 )
 
 
+def cal_acc(metrics):
+    for cate in metrics:
+        if cate not in ['total', 'correct']:
+            correct = metrics[cate]['correct']
+            total = metrics[cate]['total']
+            acc = round(correct / total * 100, 2) if total > 0 else 0.0
+            metrics[cate]['acc'] = acc
+    try:
+        metrics['acc'] = round(metrics['correct'] / metrics['total'] * 100, 2) if metrics['total'] > 0 else 0.0
+    except:
+        pass
+    return metrics
+
+def extract_json(resp: str):
+    match = re.search(r"```(?:json)?\s*(.*?)\s*```", resp, re.S | re.I)
+    if not match:
+        return None
+    return json.loads(match.group(1))
+
+def safe_load_json_response(resp: str):
+    try:
+        return json.loads(resp)
+    except:
+        return extract_json(resp)
+
 def tokenize(text):
     text = text.lower().replace(".", " .").split(" ")
     return text

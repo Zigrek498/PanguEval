@@ -6,3 +6,8 @@ from .GPQA_Diamond.GPQA_Diamond import GPQA_Diamond
 from .MATH_500.MATH_500 import MATH_500
 from .AIME24.AIME24 import AIME24
 from .AIME25.AIME25 import AIME25
+from .CSarcasm.CSarcasm import CSarcasm
+from .Wbdmt.Wbdmt import Wbdmt
+from .Dwsxjy.Dwsxjy import Dwsxjy
+from .Wbsxcq.Wbsxcq import Wbsxcq
+from .Yxxxtq_inf.Yxxxtq_inf import Yxxxtq_inf

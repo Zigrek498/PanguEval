@@ -24,17 +24,15 @@ class MMLU_Pro(BaseDataset):
         self.num_chunks = int(os.environ.get("num_chunks",1))
     
     def load_data(self):
-        # dataset = load_dataset(self.dataset_path)["train"]
         dataset = load_dataset(
             "parquet",
             data_files=f"{self.dataset_path}/*.parquet"
         )["train"]
 
-        dataset = dataset.shuffle(seed=42).select(range(20))
+        dataset = dataset.shuffle(seed=42)
         
         for idx,sample in tqdm(enumerate(dataset)):
             if idx % self.num_chunks == self.chunk_idx:
-                # if sample["task"] in medical_subject:
                 sample = self.construct_messages(sample)
                 self.samples.append(sample)
         print(len(self.samples))
@@ -55,7 +53,6 @@ class MMLU_Pro(BaseDataset):
         sample["messages"] = messages
         sample["answer"] = answer
         sample["choices"] = choices
-        # import pdb;pdb.set_trace()
         return sample
 
 
